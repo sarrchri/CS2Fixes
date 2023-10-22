@@ -135,6 +135,7 @@ CGlobalVars* gpGlobals = nullptr;
 CPlayerManager* g_playerManager = nullptr;
 IVEngineServer2* g_pEngineServer2;
 CGameConfig *g_GameConfig = nullptr;
+CGameRules *g_pGameRules = nullptr;
 
 PLUGIN_EXPOSE(CS2Fixes, g_CS2Fixes);
 bool CS2Fixes::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, bool late)
