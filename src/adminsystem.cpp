@@ -696,12 +696,12 @@ CON_COMMAND_CHAT(setteam, "set a player's team")
 			ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "You don't have access to this command.");
 			return;
 		}
+	}
 
-		if (args.ArgC() < 3)
-		{
-			ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "Usage: !setteam <name> <team (0-3)>");
-			return;
-		}
+	if (args.ArgC() < 3)
+	{
+		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "Usage: !setteam <name> <team (0-3)>");
+		return;
 	}
 
 	int iNumClients = 0;
@@ -789,20 +789,19 @@ CON_COMMAND_CHAT(noclip, "toggle noclip on yourself")
 
 CON_COMMAND_CHAT(entfire, "fire outputs at entities")
 {
-	if (!player)
+	int iCommandPlayer = -1;
+
+	if (player)
 	{
-		ClientPrint(player, HUD_PRINTCONSOLE, CHAT_PREFIX "You cannot use this command from the server console.");
-		return;
-	}
+		iCommandPlayer = player->GetPlayerSlot();
 
-	int iCommandPlayer = player->GetPlayerSlot();
+		ZEPlayer *pPlayer = g_playerManager->GetPlayer(player->GetPlayerSlot());
 
-	ZEPlayer *pPlayer = g_playerManager->GetPlayer(player->GetPlayerSlot());
-
-	if (!pPlayer->IsAdminFlagSet(ADMFLAG_RCON))
-	{
-		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "You don't have access to this command.");
-		return;
+		if (!pPlayer->IsAdminFlagSet(ADMFLAG_RCON))
+		{
+			ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "You don't have access to this command.");
+			return;
+		}
 	}
 
 	if (args.ArgC() < 3)
@@ -817,7 +816,7 @@ CON_COMMAND_CHAT(entfire, "fire outputs at entities")
 
 	CEntityInstance *pTarget = nullptr;
 
-	// The idea here is to only use one of the targeting modes at once, prioritizing !picker then !target
+	// The idea here is to only use one of the targeting modes at once, prioritizing !picker then targetname/!self then classname
 	// Try picker first, FindEntityByName can also take !picker but it always uses player 0 so we have to do this ourselves
 	if (!V_strcmp("!picker", args[1]))
 	{
@@ -832,7 +831,7 @@ CON_COMMAND_CHAT(entfire, "fire outputs at entities")
 	
 	if (!iFoundEnts)
 	{
-		while (pTarget = UTIL_FindEntityByName(pTarget, args[1]), player)
+		while (pTarget = UTIL_FindEntityByName(pTarget, args[1], player))
 		{
 			UTIL_AddEntityIOEvent(pTarget, args[2], player, player, value);
 			iFoundEnts++;
