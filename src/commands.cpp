@@ -190,7 +190,7 @@ void ClientPrint(CBasePlayerController *player, int hud_dest, const char *msg, .
 	else
 		ConMsg("%s\n", buf);
 }
-
+/************** Disabled
 CON_COMMAND_CHAT(stopsound, "toggle weapon sounds")
 {
 	if (!player)
@@ -218,7 +218,7 @@ CON_COMMAND_CHAT(toggledecals, "toggle world decals, if you're into having 10 fp
 
 	ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "You have %s world decals.", bSet ? "disabled" : "enabled");
 }
-
+*************/
 CON_COMMAND_CHAT(myuid, "test")
 {
 	if (!player)
@@ -231,7 +231,7 @@ CON_COMMAND_CHAT(myuid, "test")
 
 // CONVAR_TODO
 static constexpr float g_flMaxZteleDistance = 150.0f;
-
+/*************
 CON_COMMAND_CHAT(ztele, "teleport to spawn")
 {
 	if (!player)
@@ -293,10 +293,10 @@ CON_COMMAND_CHAT(ztele, "teleport to spawn")
 		}
 	});
 }
-
+*************/
 // CONVAR_TODO
 static constexpr int g_iMaxHideDistance = 2000;
-
+/*************
 CON_COMMAND_CHAT(hide, "hides nearby teammates")
 {
 	if (!player)
@@ -337,7 +337,7 @@ CON_COMMAND_CHAT(hide, "hides nearby teammates")
 	else
 		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX "Now hiding teammates within %i units.", distance);
 }
-
+*************/
 
 #if _DEBUG
 CON_COMMAND_CHAT(message, "message someone")
