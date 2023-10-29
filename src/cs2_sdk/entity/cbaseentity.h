@@ -21,35 +21,12 @@
 
 #include "../schema.h"
 #include "ccollisionproperty.h"
+#include "globaltypes.h"
 #include "mathlib/vector.h"
 #include "ehandle.h"
 #include "../../gameconfig.h"
 
-CGlobalVars* GetGameGlobals();
-
 extern CGameConfig *g_GameConfig;
-
-class CNetworkTransmitComponent
-{
-public:
-	DECLARE_SCHEMA_CLASS_INLINE(CNetworkTransmitComponent)
-};
-
-class CNetworkOriginCellCoordQuantizedVector
-{
-public:
-	DECLARE_SCHEMA_CLASS_INLINE(CNetworkOriginCellCoordQuantizedVector)
-
-	SCHEMA_FIELD(uint16, m_cellX)
-	SCHEMA_FIELD(uint16, m_cellY)
-	SCHEMA_FIELD(uint16, m_cellZ)
-	SCHEMA_FIELD(uint16, m_nOutsideWorld)
-
-	// These are actually CNetworkedQuantizedFloat but we don't have the definition for it...
-	SCHEMA_FIELD(float, m_vecX)
-	SCHEMA_FIELD(float, m_vecY)
-	SCHEMA_FIELD(float, m_vecZ)
-};
 
 class CGameSceneNode
 {
@@ -126,6 +103,7 @@ public:
 	SCHEMA_FIELD_POINTER(CNetworkTransmitComponent, m_NetworkTransmitComponent)
 	SCHEMA_FIELD(int, m_iHealth)
 	SCHEMA_FIELD(int, m_iTeamNum)
+	SCHEMA_FIELD(Vector, m_vecAbsVelocity)
 	SCHEMA_FIELD(Vector, m_vecBaseVelocity)
 	SCHEMA_FIELD(CCollisionProperty*, m_pCollision)
 	SCHEMA_FIELD(MoveType_t, m_MoveType)
@@ -160,6 +138,11 @@ public:
 	{
 		static int offset = g_GameConfig->GetOffset("IsEntityController");
 		return CALL_VIRTUAL(bool, offset, this);
+	}
+
+	void AcceptInput(const char *pInputName, CEntityInstance *pActivator = nullptr, CEntityInstance *pCaller = nullptr, variant_string_t *value = nullptr)
+	{
+		addresses::CEntityInstance_AcceptInput(this, pInputName, pActivator, pCaller, value, 0);
 	}
 
 	bool IsAlive() { return m_lifeState == LifeState_t::LIFE_ALIVE; }

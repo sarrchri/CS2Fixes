@@ -31,15 +31,20 @@
 #include "entity/cbasemodelentity.h"
 #include "entity/ccsweaponbase.h"
 #include "entity/ctriggerpush.h"
+#include "entity/cgamerules.h"
 #include "playermanager.h"
 #include "igameevents.h"
 #include "gameconfig.h"
+
+#define VPROF_ENABLED
+#include "tier0/vprof.h"
 
 #include "tier0/memdbgon.h"
 
 extern CGlobalVars *gpGlobals;
 extern CEntitySystem *g_pEntitySystem;
 extern IGameEventManager2 *g_gameEventManager;
+extern CCSGameRules *g_pGameRules;
 
 DECLARE_DETOUR(Host_Say, Detour_Host_Say);
 DECLARE_DETOUR(UTIL_SayTextFilter, Detour_UTIL_SayTextFilter);
@@ -48,6 +53,13 @@ DECLARE_DETOUR(IsHearingClient, Detour_IsHearingClient);
 DECLARE_DETOUR(CSoundEmitterSystem_EmitSound, Detour_CSoundEmitterSystem_EmitSound);
 DECLARE_DETOUR(CCSWeaponBase_Spawn, Detour_CCSWeaponBase_Spawn);
 DECLARE_DETOUR(TriggerPush_Touch, Detour_TriggerPush_Touch);
+DECLARE_DETOUR(CGameRules_Constructor, Detour_CGameRules_Constructor);
+
+void FASTCALL Detour_CGameRules_Constructor(CGameRules *pThis)
+{
+	g_pGameRules = (CCSGameRules*)pThis;
+	CGameRules_Constructor(pThis);
+}
 
 void FASTCALL Detour_TriggerPush_Touch(CTriggerPush* pPush, Z_CBaseEntity* pOther)
 {
@@ -147,9 +159,6 @@ bool FASTCALL Detour_IsHearingClient(void* serverClient, int index)
 
 void FASTCALL Detour_UTIL_SayTextFilter(IRecipientFilter &filter, const char *pText, CCSPlayerController *pPlayer, uint64 eMessageType)
 {
-	int entindex = filter.GetRecipientIndex(0).Get();
-	CCSPlayerController *target = (CCSPlayerController *)g_pEntitySystem->GetBaseEntity((CEntityIndex)entindex);
-
 	if (pPlayer)
 		return UTIL_SayTextFilter(filter, pText, pPlayer, eMessageType);
 
@@ -169,10 +178,10 @@ void FASTCALL Detour_UTIL_SayText2Filter(
 	const char *param3,
 	const char *param4)
 {
-	int entindex = filter.GetRecipientIndex(0).Get() + 1;
-	CCSPlayerController *target = (CCSPlayerController *)g_pEntitySystem->GetBaseEntity((CEntityIndex)entindex);
-
 #ifdef _DEBUG
+    CPlayerSlot slot = filter.GetRecipientIndex(0);
+	CCSPlayerController* target = CCSPlayerController::FromSlot(slot);
+
 	if (target)
 		Message("Chat from %s to %s: %s\n", param1, target->GetPlayerName(), param2);
 #endif
@@ -182,7 +191,7 @@ void FASTCALL Detour_UTIL_SayText2Filter(
 
 void FASTCALL Detour_Host_Say(CCSPlayerController *pController, CCommand &args, bool teamonly, int unk1, const char *unk2)
 {
-	bool bGagged = pController && g_playerManager->GetPlayer(pController->GetPlayerSlot())->IsGagged();
+	bool bGagged = pController && pController->GetZEPlayer()->IsGagged();
 
 	if (!bGagged && *args[1] != '/')
 	{
@@ -204,7 +213,7 @@ void FASTCALL Detour_Host_Say(CCSPlayerController *pController, CCommand &args, 
 	}
 
 	if (*args[1] == '!' || *args[1] == '/')
-		ParseChatCommand(args[1], pController);
+		ParseChatCommand(args.ArgS() + 1, pController); // The string returned by ArgS() starts with a \, so skip it
 }
 
 void Detour_Log()
@@ -296,6 +305,10 @@ bool InitDetours(CGameConfig *gameConfig)
 	if (!TriggerPush_Touch.CreateDetour(gameConfig))
 		success = false;
 	TriggerPush_Touch.EnableDetour();
+
+	if (!CGameRules_Constructor.CreateDetour(gameConfig))
+		success = false;
+	CGameRules_Constructor.EnableDetour();
 
 	return success;
 }
