@@ -1,3 +1,4 @@
+
 /**
  * =============================================================================
  * CS2Fixes
@@ -19,33 +20,27 @@
 
 #pragma once
 
-#include "cbaseentity.h"
-#include "cbasemodelentity.h"
-#include "services.h"
-
-class CBasePlayerPawn : public CBaseModelEntity
+enum class ERTVState
 {
-public:
-	DECLARE_SCHEMA_CLASS(CBasePlayerPawn);
-
-	SCHEMA_FIELD(CPlayer_MovementServices*, m_pMovementServices)
-	SCHEMA_FIELD(uint8*, m_pWeaponServices)
-	SCHEMA_FIELD(CCSPlayer_ItemServices*, m_pItemServices)
-	SCHEMA_FIELD(CHandle<CBasePlayerController>, m_hController)
-
-	void TakeDamage(int iDamage)
-	{
-		if (m_iHealth() - iDamage <= 0)
-			CommitSuicide(false, true);
-		else
-			Z_CBaseEntity::TakeDamage(iDamage);
-	}
-
-	void CommitSuicide(bool bExplode, bool bForce)
-	{
-		static int offset = g_GameConfig->GetOffset("CBasePlayerPawn_CommitSuicide");
-		CALL_VIRTUAL(void, offset, this, bExplode, bForce);
-	}
-
-	CBasePlayerController *GetController() { return m_hController.Get(); }
+	MAP_START,
+	RTV_ALLOWED,
+	POST_RTV_SUCCESSFULL,
+	POST_LAST_ROUND_END,
+	BLOCKED_BY_ADMIN,
 };
+
+enum class EExtendState
+{
+	MAP_START,
+	EXTEND_ALLOWED,
+	POST_EXTEND_COOLDOWN,
+	POST_EXTEND_NO_EXTENDS_LEFT,
+	POST_LAST_ROUND_END,
+	NO_EXTENDS,
+};
+
+extern ERTVState g_RTVState;
+extern EExtendState g_ExtendState;
+extern int g_ExtendsLeft;
+
+void SetExtendsLeft();
