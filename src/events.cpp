@@ -64,7 +64,7 @@ void UnregisterEventListeners()
 
 // CONVAR_TODO
 bool g_bForceCT = true;
-
+/*
 CON_COMMAND_F(c_force_ct, "toggle forcing CTs on every round", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
 {
 	if (args.ArgC() > 1)
@@ -89,7 +89,7 @@ GAME_EVENT_F(round_prestart)
 		pController->SwitchTeam(CS_TEAM_CT);
 	}
 }
-
+*/
 bool g_bBlockTeamMessages = true;
 
 CON_COMMAND_F(c_block_team_messages, "toggle team messages", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
@@ -106,7 +106,7 @@ GAME_EVENT_F(player_team)
 }
 
 // CONVAR_TODO: have a convar for forcing debris collision
-
+/*
 GAME_EVENT_F(player_spawn)
 {
 	CCSPlayerController *pController = (CCSPlayerController *)pEvent->GetPlayerController("userid");
@@ -208,3 +208,4 @@ GAME_EVENT_F(round_end)
 		pPlayer->SetTotalDamage(0);
 	}
 }
+*/
