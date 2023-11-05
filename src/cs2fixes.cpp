@@ -346,6 +346,7 @@ void CS2Fixes::Hook_GameServerSteamAPIDeactivated()
 	RETURN_META(MRES_IGNORED);
 }
 
+/*
 void CS2Fixes::Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients,
 	INetworkSerializable* pEvent, const void* pData, unsigned long nSize, NetChannelBufType_t bufType)
 {
@@ -393,6 +394,7 @@ void CS2Fixes::Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClie
 		*(uint64 *)clients &= ~g_playerManager->GetStopDecalsMask();
 	}
 }
+*/
 
 void CS2Fixes::AllPluginsLoaded()
 {
