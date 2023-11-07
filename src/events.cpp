@@ -63,33 +63,33 @@ void UnregisterEventListeners()
 }
 
 // CONVAR_TODO
-bool g_bForceCT = true;
-/*
-CON_COMMAND_F(c_force_ct, "toggle forcing CTs on every round", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
+bool g_bForceT = true;
+
+CON_COMMAND_F(c_force_t, "toggle forcing CTs on every round", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
 {
 	if (args.ArgC() > 1)
-		g_bForceCT = V_StringToBool(args[1], true);
+		g_bForceT = V_StringToBool(args[1], true);
 
-	Message("Forcing CTs on every round is now %s.\n", g_bForceCT ? "ON" : "OFF");
+	Message("Forcing Ts on every round is now %s.\n", g_bForceT ? "ON" : "OFF");
 }
 
 GAME_EVENT_F(round_prestart)
 {
-	if (!g_bForceCT)
+	if (!g_bForceT)
 		return;
 
 	for (int i = 0; i < gpGlobals->maxClients; i++)
 	{
 		CCSPlayerController* pController = CCSPlayerController::FromSlot(i);
 
-		// Only do this for Ts, ignore CTs and specs
-		if (!pController || pController->m_iTeamNum() != CS_TEAM_T)
+		// Only do this for CTs, ignore Ts and specs
+		if (!pController || pController->m_iTeamNum() != CS_TEAM_CT)
 			continue;
 
-		pController->SwitchTeam(CS_TEAM_CT);
+		pController->SwitchTeam(CS_TEAM_T);
 	}
 }
-*/
+
 bool g_bBlockTeamMessages = true;
 
 CON_COMMAND_F(c_block_team_messages, "toggle team messages", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
