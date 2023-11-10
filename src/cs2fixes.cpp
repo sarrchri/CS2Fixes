@@ -346,7 +346,7 @@ void CS2Fixes::Hook_GameServerSteamAPIDeactivated()
 	RETURN_META(MRES_IGNORED);
 }
 
-/*
+
 void CS2Fixes::Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients,
 	INetworkSerializable* pEvent, const void* pData, unsigned long nSize, NetChannelBufType_t bufType)
 {
@@ -356,7 +356,7 @@ void CS2Fixes::Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClie
 							INetworkSerializable *, const void *, unsigned long, NetChannelBufType_t) = &IGameEventSystem::PostEventAbstract;
 
 	NetMessageInfo_t *info = pEvent->GetNetMessageInfo();
-
+	/*
 	if (info->m_MessageId == GE_FireBulletsId)
 	{
 		if (g_playerManager->GetSilenceSoundMask())
@@ -393,8 +393,9 @@ void CS2Fixes::Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClie
 	{
 		*(uint64 *)clients &= ~g_playerManager->GetStopDecalsMask();
 	}
+	*/
 }
-*/
+
 
 void CS2Fixes::AllPluginsLoaded()
 {
