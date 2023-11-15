@@ -903,8 +903,9 @@ CON_COMMAND_CHAT_FLAGS(extend, "extend current map (negative value reduces map d
 	// CONVAR_TODO
 	ConVar* cvar = g_pCVar->GetConVar(g_pCVar->FindConVar("mp_timelimit"));
 
-	float flTimelimit;
-	memcpy(&flTimelimit, &cvar->values, sizeof(flTimelimit));
+	// CONVAR_TODO
+	// HACK: values is actually the cvar value itself, hence this ugly cast.
+	float flTimelimit = *(float *)&cvar->values;
 
 	if (gpGlobals->curtime - g_pGameRules->m_flGameStartTime > flTimelimit * 60)
 		flTimelimit = (gpGlobals->curtime - g_pGameRules->m_flGameStartTime) / 60.0f + iExtendTime;
@@ -1034,6 +1035,9 @@ bool CAdminSystem::LoadInfractions()
 
 void CAdminSystem::SaveInfractions()
 {
+	if (m_vecInfractions.Count() == 0)
+		return;
+
 	KeyValues* pKV = new KeyValues("infractions");
 	KeyValues* pSubKey;
 	KeyValues::AutoDelete autoDelete(pKV);
