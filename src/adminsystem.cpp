@@ -918,11 +918,17 @@ CON_COMMAND_CHAT_FLAGS(extend, "extend current map (negative value reduces map d
 	if (flTimelimit <= 0)
 		flTimelimit = 1;
 
+	// CONVAR_TODO
 	char buf[32];
 	V_snprintf(buf, sizeof(buf), "mp_timelimit %.6f", flTimelimit);
-
-	// CONVAR_TODO
 	g_pEngineServer2->ServerCommand(buf);
+
+	const char* pszCommandPlayerName = player ? player->GetPlayerName() : "Console";
+
+	if (iExtendTime < 0)
+		ClientPrintAll(HUD_PRINTTALK, CHAT_PREFIX ADMIN_PREFIX "shortened map time %i minutes.", pszCommandPlayerName, iExtendTime * -1);
+	else
+		ClientPrintAll(HUD_PRINTTALK, CHAT_PREFIX ADMIN_PREFIX "extended map time %i minutes.", pszCommandPlayerName, iExtendTime);
 }
 
 bool CAdminSystem::LoadAdmins()
